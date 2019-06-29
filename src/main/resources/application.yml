@@ -1,0 +1,39 @@
+server:
+    port: 9000
+wepark:
+    client: http://localhost:3000
+    calendar: http://localhost:7064
+    garage: http://localhost:7337
+    notification: http://localhost:7065
+spring:
+    application:
+        name: api-gateway-service
+    cloud:
+        gateway:
+            routes:
+            -   id: ui-route
+                uri: ${wepark.client}
+                predicates:
+                - Path=/ui/v1/client/**
+            -   id: calendar-api
+                uri: ${wepark.calendar}
+                predicates:
+                - Path=/api/v1/calendar/**
+                filters:
+                - StripPrefix=3
+            -   id: garage-api
+                uri: ${wepark.garage}
+                predicates:
+                - Path=/api/v1/garage/**
+                filters:
+                - StripPrefix=3
+            -   id: notification-api
+                uri: ${wepark.notification}
+                predicates:
+                - Path=/api/v1/notification/**
+                filters:
+                - StripPrefix=3
+            -   id: test-route
+                uri: https://www.google.com
+                predicates:
+                - Path=/api/v1/test/**
